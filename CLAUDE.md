@@ -90,6 +90,9 @@ These govern how docs are maintained. Apply on every chat touching code.
 - Examples beat explanations.
 - Anti-patterns beat abstract rules.
 
+### Before writing any code or schema
+List every open question first. Do not write a single line of code, SQL, or schema until every question is answered. If a question surfaces mid-implementation, stop and ask immediately — do not guess and proceed.
+
 ### Never
 - Put decisions in this file (they belong in `DECISIONS.md`)
 - Put "how it works now" in `DECISIONS.md` (that's `docs/FEATURES.md` / `docs/ARCHITECTURE.md`)
