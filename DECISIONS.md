@@ -85,3 +85,25 @@ Free API access available for GPT-4o seals the choice on cost. At portfolio scop
 **Alternatives explicitly rejected:**
 - Claude — viable but not chosen due to GPT-4o free access
 - Model abstraction layer (provider-agnostic interface) — over-engineering for v1 portfolio scope
+
+---
+
+## 2026-05-25 — date-fns + date-fns-tz for date handling
+
+**Status:** Accepted
+
+**Context:**
+Peshi is India-specific — all lawyers and hearings are in IST. The question was whether a timezone library is needed at all, or whether plain `Date` arithmetic is sufficient.
+
+**Decision:** Use `date-fns` + `date-fns-tz`.
+
+**Reason:**
+Vercel servers run in UTC (US/EU data centres). Without explicit IST conversion, `new Date()` on the server produces a UTC timestamp. Dashboard bucket boundaries ("today", "tomorrow", "this week") and Inngest cron schedules expressed in IST will silently miscalculate — e.g. a 20:00 IST prep brief cron fires at 14:30 UTC, and "tomorrow's hearings" resolves to the wrong day for a lawyer checking at 11pm IST. `date-fns-tz` adds IST-aware `zonedTimeToUtc` / `utcToZonedTime` with no mutable global state. `date-fns` is tree-shakeable and has no side-effects. Together they cover all cases.
+
+**Consequences:**
+- All bucket-boundary calculations and cron expressions must use IST explicitly — `Asia/Kolkata`
+- Raw `Date` arithmetic is banned in feature code (rule already in `CONVENTIONS.md`)
+
+**Alternatives explicitly rejected:**
+- `dayjs` + `dayjs/plugin/timezone` — viable, terser API, but mutable plugin model and less tree-shaking
+- Plain `Date` + UTC offsets hardcoded — brittle, breaks on DST edge cases (India has no DST but UTC offset arithmetic is still error-prone)

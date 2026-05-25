@@ -72,9 +72,9 @@ setTimeout(() => fetchEcourts(caseId), 0);
 
 ## Date handling
 
-**Rule:** Use a single date library (TBD: `date-fns` or `dayjs` — to be set on day 2). Never use raw `Date` arithmetic for hearing scheduling or bucket boundaries.
+**Rule:** Use `date-fns` + `date-fns-tz`. Never use raw `Date` arithmetic for hearing scheduling or bucket boundaries. All bucket boundaries and cron expressions must use `Asia/Kolkata` explicitly.
 
-**Why:** Timezone bugs are silent. Hearings are in IST regardless of where the server runs.
+**Why:** Vercel runs in UTC. Without explicit IST conversion, "today" on the server is a different day than "today" for a lawyer in Delhi at 11pm. See `DECISIONS.md` → "date-fns + date-fns-tz".
 
 ---
 
